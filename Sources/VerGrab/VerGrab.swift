@@ -13,19 +13,11 @@ final public class VerGrab:Sendable {
     private init() {}
     
     public func appVersion() -> String {
-        var version = ""
-        if let value = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
-            version = value
-        }
-        return version
+        return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
     }
     
-    public func appBundleVersion() -> String {
-        var version = ""
-        if let value = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
-            version = value
-        }
-        return version
+    public func appBuild() -> String {
+        return Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
     }
     
     public func machineName() -> String {
@@ -52,8 +44,12 @@ final public class VerGrab:Sendable {
 #endif
     }
     
+    public func appInfo() -> String {
+        return "\(appVersion())(\(appBuild()))"
+    }
+    
     @MainActor public func description() -> String {
-        return "\(appVersion())(\(appBundleVersion()))/\(machineName())/\(osVersion())"
+        return "\(appVersion())(\(appBuild()))/\(machineName())/\(osVersion())"
     }
     
 }

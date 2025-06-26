@@ -5,8 +5,9 @@ import Testing
     // Write your test here and use APIs like `#expect(...)` to check expected conditions.
     
     await print(VerGrab.shared.appVersion())
-    await print(VerGrab.shared.appBundleVersion())
+    await print(VerGrab.shared.appBuild())
     await print(VerGrab.shared.machineName())
     await print(VerGrab.shared.osVersion())
+    await print(VerGrab.shared.appInfo())
     await print(VerGrab.shared.description())
 }
