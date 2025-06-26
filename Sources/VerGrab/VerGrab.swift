@@ -7,12 +7,12 @@ import UIKit
 #endif
 
 
-final public class VerGrab {
-    nonisolated(unsafe) static let shared = VerGrab()
+final public class VerGrab:Sendable {
+    @MainActor public static let shared = VerGrab()
     
     private init() {}
     
-    func appVersion() -> String {
+    public func appVersion() -> String {
         var version = ""
         if let value = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
             version = value
@@ -20,7 +20,7 @@ final public class VerGrab {
         return version
     }
     
-    func appBundleVersion() -> String {
+    public func appBundleVersion() -> String {
         var version = ""
         if let value = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
             version = value
@@ -28,7 +28,7 @@ final public class VerGrab {
         return version
     }
     
-    func machineName() -> String {
+    public func machineName() -> String {
 #if os(macOS)
         let name = "hw.model"
 #else
@@ -43,7 +43,7 @@ final public class VerGrab {
         return String(data: data, encoding: .utf8) ?? ""
     }
     
-    @MainActor func osVersion() -> String {
+    @MainActor public func osVersion() -> String {
 #if os(macOS)
         let os = ProcessInfo.processInfo.operatingSystemVersion
         return "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
@@ -52,7 +52,7 @@ final public class VerGrab {
 #endif
     }
     
-    @MainActor func description() -> String {
+    @MainActor public func description() -> String {
         return "\(appVersion())(\(appBundleVersion()))/\(machineName())/\(osVersion())"
     }
     
