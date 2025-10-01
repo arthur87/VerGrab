@@ -59,7 +59,7 @@ final public class VerGrab:Sendable {
     @MainActor public func description() -> String {
         let testFlight = isTestFlight() ? ";TestFlight" : ""
         
-        return "\(appVersion())(\(appBuild())\(testFlight)/\(machineName())/\(osVersion())"
+        return "\(appVersion())(\(appBuild())\(testFlight))/\(machineName())/\(osVersion())"
     }
     
 }
