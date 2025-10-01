@@ -48,8 +48,18 @@ final public class VerGrab:Sendable {
         return "\(appVersion())(\(appBuild()))"
     }
     
+    public func isTestFlight() -> Bool {
+        guard let appStoreReceiptURL = Bundle.main.appStoreReceiptURL else {
+            return false
+        }
+        
+        return appStoreReceiptURL.path.contains("sandboxReceipt")
+    }
+    
     @MainActor public func description() -> String {
-        return "\(appVersion())(\(appBuild()))/\(machineName())/\(osVersion())"
+        let testFlight = isTestFlight() ? ";TestFlight" : ""
+        
+        return "\(appVersion())(\(appBuild())\(testFlight))/\(machineName())/\(osVersion())"
     }
     
 }
