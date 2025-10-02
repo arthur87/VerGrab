@@ -5,7 +5,9 @@ import Foundation
 #if !os(macOS)
 import UIKit
 #endif
-
+#if !os(tvOS)
+import FoundationModels
+#endif
 
 final public class VerGrab:Sendable {
     @MainActor public static let shared = VerGrab()
@@ -54,6 +56,18 @@ final public class VerGrab:Sendable {
         }
         
         return appStoreReceiptURL.path.contains("sandboxReceipt")
+    }
+    
+    func isAppleIntelligenceAvailable() -> Bool {
+#if os(tvOS)
+        return false
+#else
+        if #available(iOS 26.0, *) {
+            return SystemLanguageModel.default.isAvailable
+        } else {
+            return false
+        }
+#endif
     }
     
     @MainActor public func description() -> String {
