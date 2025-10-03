@@ -10,4 +10,6 @@ import Testing
     await print(VerGrab.shared.osVersion())
     await print(VerGrab.shared.appInfo())
     await print(VerGrab.shared.description())
+    await print(VerGrab.shared.isTestFlight())
+    await print(VerGrab.shared.isAppleIntelligenceAvailable())
 }
