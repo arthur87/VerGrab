@@ -5,7 +5,7 @@ import Foundation
 #if !os(macOS)
 import UIKit
 #endif
-#if !os(tvOS)
+#if !(os(tvOS) || os(watchOS))
 import FoundationModels
 #endif
 
@@ -66,10 +66,10 @@ final public class VerGrab:Sendable {
     
     // Apple Intelligenceが利用可能なときtrueを返す
     public func isAppleIntelligenceAvailable() -> Bool {
-#if os(tvOS)
+#if os(tvOS) || os(watchOS)
         return false
 #else
-        if #available(iOS 26.0, *) {
+        if #available(macOS 26.0, visionOS 26.0, visionOS 26.0, *) {
             return SystemLanguageModel.default.isAvailable
         } else {
             return false
