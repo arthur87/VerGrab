@@ -69,7 +69,7 @@ final public class VerGrab:Sendable {
 #if os(tvOS) || os(watchOS)
         return false
 #else
-        if #available(macOS 26.0, visionOS 26.0, visionOS 26.0, *) {
+        if #available(macOS 26.0, iOS 26.0, visionOS 26.0, *) {
             return SystemLanguageModel.default.isAvailable
         } else {
             return false
