@@ -64,6 +64,33 @@ final public class VerGrab:Sendable {
         return appStoreReceiptURL.path.contains("sandboxReceipt")
     }
     
+    // シミュレータ上で動作しているときtrueを返す
+    public func isSimulator() -> Bool {
+#if targetEnvironment(simulator)
+        return true
+#else
+        return false
+#endif
+    }
+    
+    // Mac Catalyst上で動作しているときtrueを返す
+    public func isMacCatalyst() -> Bool {
+#if targetEnvironment(macCatalyst)
+        return true
+#else
+        return false
+#endif
+    }
+    
+    // デバッグビルドのときtrueを返す
+    public func isDebugBuild() -> Bool {
+#if DEBUG
+        return true
+#else
+        return false
+#endif
+    }
+    
     // Apple Intelligenceが利用可能なときtrueを返す
     public func isAppleIntelligenceAvailable() -> Bool {
 #if os(tvOS) || os(watchOS)
@@ -78,9 +105,14 @@ final public class VerGrab:Sendable {
     }
     
     @MainActor public func description() -> String {
-        let testFlight = isTestFlight() ? ";TestFlight" : ""
+        let subPart = [
+            isTestFlight() ? ";TestFlight" : "",
+            isSimulator() ? ";Simulator" : "",
+            isMacCatalyst() ? ";MacCatalyst" : "",
+            isDebugBuild() ? ";Debug" : ""
+        ].joined(separator: "")
         
-        return "\(appVersion())(\(appBuild())\(testFlight))/\(machineName())/\(osVersion())"
+        return "\(appVersion())(\(appBuild())\(subPart))/\(machineName())/\(osVersion())"
     }
     
 }
