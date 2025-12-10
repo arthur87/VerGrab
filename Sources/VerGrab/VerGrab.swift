@@ -57,11 +57,15 @@ final public class VerGrab:Sendable {
     
     // TestFlight経由でインストールしたアプリのときtrueを返す
     public func isTestFlight() -> Bool {
+#if DEBUG
+        return false
+#else
         guard let appStoreReceiptURL = Bundle.main.appStoreReceiptURL else {
             return false
         }
         
         return appStoreReceiptURL.path.contains("sandboxReceipt")
+#endif
     }
     
     // シミュレータ上で動作しているときtrueを返す
