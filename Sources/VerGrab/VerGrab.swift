@@ -14,18 +14,18 @@ final public class VerGrab:Sendable {
     
     private init() {}
     
-    // アプリのバージョンを返す
-    public func appVersion() -> String {
+    // アプリのバージョン文字列
+    public var appVersion: String {
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
     }
     
-    // アプリのビルド番号を返す
-    public func appBuild() -> String {
+    // アプリのビルド番号
+    public var appBuild: String {
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
     }
     
-    // マシンネームを返す
-    public func machineName() -> String {
+    // マシン識別子
+    public var machineIdentifier: String {
 #if os(macOS)
         let name = "hw.model"
 #else
@@ -40,8 +40,8 @@ final public class VerGrab:Sendable {
         return String(data: data, encoding: .utf8) ?? ""
     }
     
-    // OSのバージョンを返す
-    @MainActor public func osVersion() -> String {
+    // OSのバージョン文字列
+    @MainActor public var operatingSystemVersion: String {
 #if os(macOS)
         let os = ProcessInfo.processInfo.operatingSystemVersion
         return "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
@@ -50,13 +50,13 @@ final public class VerGrab:Sendable {
 #endif
     }
     
-    // アプリのバージョンとビルド番号を返す
-    public func appInfo() -> String {
-        return "\(appVersion())(\(appBuild()))"
+    // アプリのバージョンとビルド番号
+    public var appVersionAndBuild: String {
+        return "\(appVersion)(\(appBuild))"
     }
     
     // TestFlight経由でインストールしたアプリのときtrueを返す
-    public func isTestFlight() -> Bool {
+    public var isInstalledViaTestFlight: Bool {
 #if DEBUG
         return false
 #else
@@ -67,9 +67,24 @@ final public class VerGrab:Sendable {
         return appStoreReceiptURL.path.contains("sandboxReceipt")
 #endif
     }
+
+    // App Store経由でインストールしたアプリのときtrueを返す
+    // 受け取れるレシートが存在し、かつサンドボックスレシートでない場合をApp Storeインストールと判断する
+    public var isInstalledViaAppStore: Bool {
+#if DEBUG
+        return false
+#else
+        guard let appStoreReceiptURL = Bundle.main.appStoreReceiptURL else {
+            return false
+        }
+
+        // サンドボックスでない receipt が存在すれば App Store 経由での配布と判断
+        return !appStoreReceiptURL.path.contains("sandboxReceipt")
+#endif
+    }
     
     // シミュレータ上で動作しているときtrueを返す
-    public func isSimulator() -> Bool {
+    public var isRunningOnSimulator: Bool {
 #if targetEnvironment(simulator)
         return true
 #else
@@ -78,7 +93,7 @@ final public class VerGrab:Sendable {
     }
     
     // Mac Catalyst上で動作しているときtrueを返す
-    public func isMacCatalyst() -> Bool {
+    public var isRunningOnMacCatalyst: Bool {
 #if targetEnvironment(macCatalyst)
         return true
 #else
@@ -87,7 +102,7 @@ final public class VerGrab:Sendable {
     }
     
     // デバッグビルドのときtrueを返す
-    public func isDebugBuild() -> Bool {
+    public var isDebugConfiguration: Bool {
 #if DEBUG
         return true
 #else
@@ -96,7 +111,7 @@ final public class VerGrab:Sendable {
     }
     
     // Apple Intelligenceが利用可能なときtrueを返す
-    public func isAppleIntelligenceAvailable() -> Bool {
+    public var isAppleIntelligenceAvailable: Bool {
 #if os(tvOS) || os(watchOS)
         return false
 #else
@@ -108,15 +123,23 @@ final public class VerGrab:Sendable {
 #endif
     }
     
-    @MainActor public func description() -> String {
+    // 詳細なアプリのバージョン情報を取得する
+    @MainActor public var detailedDescription: String {
         let subPart = [
-            isTestFlight() ? ";TestFlight" : "",
-            isSimulator() ? ";Simulator" : "",
-            isMacCatalyst() ? ";MacCatalyst" : "",
-            isDebugBuild() ? ";Debug" : ""
+            isInstalledViaTestFlight ? ";TestFlight" : "",
+            isRunningOnSimulator ? ";Simulator" : "",
+            isRunningOnMacCatalyst ? ";MacCatalyst" : "",
+            isDebugConfiguration ? ";Debug" : ""
         ].joined(separator: "")
         
-        return "\(appVersion())(\(appBuild())\(subPart))/\(machineName())/\(osVersion())"
+        return "\(appVersion)(\(appBuild)\(subPart))/\(machineIdentifier)/\(operatingSystemVersion)"
     }
     
+    // App StoreのURLを取得する
+    // appleId: App StoreでのアプリのID
+    // withWriteReview: レビュー投稿画面を開く場合はtrue
+    public func appSotreUrl(appleId: Int, withWriteReview: Bool) -> URL? {
+        let urlString = "https://apps.apple.com/app/id\(appleId)" + (withWriteReview ? "?action=write-review" : "")
+        return URL(string: urlString)
+    }
 }
