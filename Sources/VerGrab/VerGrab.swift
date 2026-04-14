@@ -14,6 +14,17 @@ final public class VerGrab:Sendable {
     
     private init() {}
     
+    // UUIDの生成
+    public var uuid: String {
+        let key = "VerGrabUUID"
+        if let uuid = UserDefaults.standard.string(forKey: key) {
+            return uuid
+        }
+        let newUuid = UUID().uuidString.lowercased()
+        UserDefaults.standard.set(newUuid, forKey: key)
+        return newUuid
+    }
+    
     // アプリのバージョン文字列
     public var appVersion: String {
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
@@ -67,7 +78,7 @@ final public class VerGrab:Sendable {
         return appStoreReceiptURL.path.contains("sandboxReceipt")
 #endif
     }
-
+    
     // App Store経由でインストールしたアプリのときtrueを返す
     // 受け取れるレシートが存在し、かつサンドボックスレシートでない場合をApp Storeインストールと判断する
     public var isInstalledViaAppStore: Bool {
@@ -77,7 +88,7 @@ final public class VerGrab:Sendable {
         guard let appStoreReceiptURL = Bundle.main.appStoreReceiptURL else {
             return false
         }
-
+        
         // サンドボックスでない receipt が存在すれば App Store 経由での配布と判断
         return !appStoreReceiptURL.path.contains("sandboxReceipt")
 #endif
