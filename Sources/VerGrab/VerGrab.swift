@@ -51,8 +51,17 @@ final public class VerGrab:Sendable {
         return String(data: data, encoding: .utf8) ?? ""
     }
     
+    // OSの名前
+    public var operatingSystemName: String {
+#if os(macOS)
+        return "macOS"
+#else
+        return UIDevice.current.systemName
+#endif
+    }
+    
     // OSのバージョン文字列
-    @MainActor public var operatingSystemVersion: String {
+    public var operatingSystemVersion: String {
 #if os(macOS)
         let os = ProcessInfo.processInfo.operatingSystemVersion
         return "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
@@ -135,7 +144,7 @@ final public class VerGrab:Sendable {
     }
     
     // 詳細なアプリのバージョン情報を取得する
-    @MainActor public var detailedDescription: String {
+    public var detailedDescription: String {
         let subPart = [
             isInstalledViaTestFlight ? ";TestFlight" : "",
             isRunningOnSimulator ? ";Simulator" : "",
@@ -143,7 +152,7 @@ final public class VerGrab:Sendable {
             isDebugConfiguration ? ";Debug" : ""
         ].joined(separator: "")
         
-        return "\(appVersion)(\(appBuild)\(subPart))/\(machineIdentifier)/\(operatingSystemVersion)"
+        return "\(appVersion)(\(appBuild)\(subPart))/\(machineIdentifier)/\(operatingSystemName) \(operatingSystemVersion)"
     }
     
     // App StoreのURLを取得する
