@@ -22,6 +22,7 @@ print(v.appVersion)                // CFBundleShortVersionString
 print(v.appBuild)                  // CFBundleVersion
 print(v.appVersionAndBuild)        // e.g. "1.2.3(45)"
 print(v.machineIdentifier)         // hw.machine / hw.model
+print(v.operatingSystemName)       // OS name
 print(v.operatingSystemVersion)    // OS version string
 print(v.isInstalledViaAppStore)    // true if installed from App Store
 print(v.isInstalledViaTestFlight)  // true if installed via TestFlight
