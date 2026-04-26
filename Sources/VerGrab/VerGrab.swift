@@ -40,8 +40,19 @@ final public class VerGrab:Sendable {
         return String(data: data, encoding: .utf8) ?? ""
     }
     
+    // OSの名前
+    @MainActor
+    public var operatingSystemName: String {
+#if os(macOS)
+        return "macOS"
+#else
+        return UIDevice.current.systemName
+#endif
+    }
+    
     // OSのバージョン文字列
-    @MainActor public var operatingSystemVersion: String {
+    @MainActor
+    public var operatingSystemVersion: String {
 #if os(macOS)
         let os = ProcessInfo.processInfo.operatingSystemVersion
         return "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
@@ -67,7 +78,7 @@ final public class VerGrab:Sendable {
         return appStoreReceiptURL.path.contains("sandboxReceipt")
 #endif
     }
-
+    
     // App Store経由でインストールしたアプリのときtrueを返す
     // 受け取れるレシートが存在し、かつサンドボックスレシートでない場合をApp Storeインストールと判断する
     public var isInstalledViaAppStore: Bool {
@@ -77,7 +88,7 @@ final public class VerGrab:Sendable {
         guard let appStoreReceiptURL = Bundle.main.appStoreReceiptURL else {
             return false
         }
-
+        
         // サンドボックスでない receipt が存在すれば App Store 経由での配布と判断
         return !appStoreReceiptURL.path.contains("sandboxReceipt")
 #endif
@@ -124,7 +135,8 @@ final public class VerGrab:Sendable {
     }
     
     // 詳細なアプリのバージョン情報を取得する
-    @MainActor public var detailedDescription: String {
+    @MainActor
+    public var detailedDescription: String {
         let subPart = [
             isInstalledViaTestFlight ? ";TestFlight" : "",
             isRunningOnSimulator ? ";Simulator" : "",
@@ -132,7 +144,7 @@ final public class VerGrab:Sendable {
             isDebugConfiguration ? ";Debug" : ""
         ].joined(separator: "")
         
-        return "\(appVersion)(\(appBuild)\(subPart))/\(machineIdentifier)/\(operatingSystemVersion)"
+        return "\(appVersion)(\(appBuild)\(subPart))/\(machineIdentifier)/\(operatingSystemName) \(operatingSystemVersion)"
     }
     
     // App StoreのURLを取得する
@@ -143,3 +155,4 @@ final public class VerGrab:Sendable {
         return URL(string: urlString)
     }
 }
+
