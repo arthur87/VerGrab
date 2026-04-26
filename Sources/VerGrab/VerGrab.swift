@@ -14,17 +14,6 @@ final public class VerGrab:Sendable {
     
     private init() {}
     
-    // UUIDの生成
-    public var uuid: String {
-        let key = "VerGrabUUID"
-        if let uuid = UserDefaults.standard.string(forKey: key) {
-            return uuid
-        }
-        let newUuid = UUID().uuidString.lowercased()
-        UserDefaults.standard.set(newUuid, forKey: key)
-        return newUuid
-    }
-    
     // アプリのバージョン文字列
     public var appVersion: String {
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
@@ -52,6 +41,7 @@ final public class VerGrab:Sendable {
     }
     
     // OSの名前
+    @MainActor
     public var operatingSystemName: String {
 #if os(macOS)
         return "macOS"
@@ -61,6 +51,7 @@ final public class VerGrab:Sendable {
     }
     
     // OSのバージョン文字列
+    @MainActor
     public var operatingSystemVersion: String {
 #if os(macOS)
         let os = ProcessInfo.processInfo.operatingSystemVersion
@@ -144,6 +135,7 @@ final public class VerGrab:Sendable {
     }
     
     // 詳細なアプリのバージョン情報を取得する
+    @MainActor
     public var detailedDescription: String {
         let subPart = [
             isInstalledViaTestFlight ? ";TestFlight" : "",
@@ -163,3 +155,4 @@ final public class VerGrab:Sendable {
         return URL(string: urlString)
     }
 }
+
