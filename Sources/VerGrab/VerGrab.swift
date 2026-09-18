@@ -5,6 +5,11 @@ import Foundation
 #if !os(macOS)
 import UIKit
 #endif
+
+#if os(watchOS)
+import WatchKit
+#endif
+
 #if !(os(tvOS) || os(watchOS))
 import FoundationModels
 #endif
@@ -45,6 +50,8 @@ final public class VerGrab:Sendable {
     public var operatingSystemName: String {
 #if os(macOS)
         return "macOS"
+#elseif os(watchOS)
+        return WKInterfaceDevice.current().systemName
 #else
         return UIDevice.current.systemName
 #endif
@@ -56,6 +63,8 @@ final public class VerGrab:Sendable {
 #if os(macOS)
         let os = ProcessInfo.processInfo.operatingSystemVersion
         return "\(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
+#elseif os(watchOS)
+        return WKInterfaceDevice.current().systemVersion
 #else
         return UIDevice.current.systemVersion
 #endif
